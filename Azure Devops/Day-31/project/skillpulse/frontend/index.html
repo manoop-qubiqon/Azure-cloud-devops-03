@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillPulse - Track Your Learning</title>
+    <script>
+        // Prevent flash of wrong theme on page load
+        (function() {
+            var theme = localStorage.getItem('skillpulse-theme');
+            if (!theme) {
+                theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>SkillPulse</h1>
+            <p>Track your skills. Log your learning. See your progress.</p>
+        </div>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">&#127769;</button>
+    </header>
+
+    <main class="container">
+        <!-- Dashboard Stats -->
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <div class="label">Total Skills</div>
+                <div class="value">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Hours Logged</div>
+                <div class="value">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Sessions</div>
+                <div class="value">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Top Skill</div>
+                <div class="value">-</div>
+            </div>
+        </div>
+
+        <!-- Skills Section -->
+        <div class="section-header">
+            <h2>My Skills</h2>
+            <button class="btn btn-primary" onclick="openAddModal()">+ Add Skill</button>
+        </div>
+
+        <div class="skills-grid" id="skills-grid">
+            <div class="empty-state" style="grid-column: 1 / -1">
+                <h3>Loading...</h3>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Skill Modal -->
+    <div class="modal-backdrop" id="add-skill-modal">
+        <div class="modal">
+            <h3>Add a New Skill</h3>
+            <form id="add-skill-form">
+                <div class="form-group">
+                    <label for="skill-name">Skill Name</label>
+                    <input type="text" id="skill-name" placeholder="e.g., Docker, Kubernetes, Go" required>
+                </div>
+                <div class="form-group">
+                    <label for="skill-category">Category</label>
+                    <select id="skill-category">
+                        <option value="">Select a category</option>
+                        <option value="DevOps">DevOps</option>
+                        <option value="Cloud">Cloud</option>
+                        <option value="Programming">Programming</option>
+                        <option value="Databases">Databases</option>
+                        <option value="Security">Security</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="skill-target">Target Hours (optional)</label>
+                    <input type="number" id="skill-target" placeholder="e.g., 50" min="0">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Skill</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Log Session Modal -->
+    <div class="modal-backdrop" id="log-session-modal">
+        <div class="modal">
+            <h3>Log Session: <span id="log-skill-name"></span></h3>
+            <form id="log-session-form">
+                <div class="form-group">
+                    <label for="log-hours">Hours</label>
+                    <input type="number" id="log-hours" step="0.5" min="0.5" placeholder="e.g., 1.5" required>
+                </div>
+                <div class="form-group">
+                    <label for="log-date">Date</label>
+                    <input type="date" id="log-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="log-notes">Notes (optional)</label>
+                    <textarea id="log-notes" rows="3" placeholder="What did you learn?"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeLogModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Log Session</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

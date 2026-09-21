@@ -1,0 +1,53 @@
+# SkillPulse CI/CD Pipeline
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  name: 'SelfHostedPool'
+
+stages:
+  - stage: Code
+    displayName: 'Code'
+    jobs:
+      - job: Validate
+        steps:
+          - checkout: self
+          - script: docker compose config --quiet
+            displayName: 'Validate Compose File'
+
+  - stage: Build
+    displayName: 'Build'
+    dependsOn: Code
+    jobs:
+      - job: Build
+        steps:
+          - checkout: self
+          - script: docker compose build
+            displayName: 'Build Docker Images'
+
+  - stage: Test
+    displayName: 'Test'
+    dependsOn: Build
+    jobs:
+      - job: Test
+        steps:
+          - checkout: self
+          - script: |
+              cp .env.example .env
+              echo "Run Integration Tests"
+            displayName: 'Run Integration Tests'
+
+  - stage: Deploy
+    displayName: 'Deploy'
+    dependsOn: Test
+    jobs:
+      - job: Deploy
+        steps:
+          - checkout: self
+          - script: |
+              cp .env.example .env
+              docker compose down || true
+              docker compose up -d --build
+            displayName: 'Deploy SkillPulse'

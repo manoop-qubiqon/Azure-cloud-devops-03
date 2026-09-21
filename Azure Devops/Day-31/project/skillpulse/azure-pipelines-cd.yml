@@ -1,0 +1,47 @@
+# azure-pipelines-cd.yml
+
+trigger: none
+pr: none
+
+pool:
+  name: 'SelfHostedPool'
+
+variables:
+  APP_DIR: '$(Build.SourcesDirectory)'
+
+stages:
+- stage: Deploy
+  displayName: 'Deploy Application'
+
+  jobs:
+  - job: Deploy
+    displayName: 'Deploy to Self-Hosted VM'
+
+    steps:
+    - checkout: self
+
+    - script: |
+        echo "Current Directory:"
+        pwd
+        ls -la
+      displayName: 'Verify Repository'
+
+    - script: |
+        cp .env.example .env
+      displayName: 'Create Environment File'
+
+    - script: |
+        docker compose down || true
+      displayName: 'Stop Existing Containers'
+
+    - script: |
+        docker compose build
+      displayName: 'Build Docker Images'
+
+    - script: |
+        docker compose up -d
+      displayName: 'Start Containers'
+
+    - script: |
+        docker compose ps
+      displayName: 'Verify Deployment'
